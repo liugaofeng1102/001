@@ -1,0 +1,556 @@
+Yii总结:
+安装
+php ***/framework/yiic.php webapp 项目目录
+url地址规则:
+***/index.php?r=模块/控制器/方法
+C
+1\controllers/XxxController.php
+2\类名和类文件名同名
+3\必须继承Controller
+4\方法 名称actionXxx
+创建模块:
+修改配置文件
+modules
+url地址输入***/index.php?r=gii
+提示
+后台访问控制:
+adminModule.php模块的入口程序
+
+Controller类的方法及属性:
+方法:
+init()
+render('模板名',array());
+renderPartial('模板名',array())
+createUrl("控制器/方法",array('名'=>'值'))
+redirect(url地址)
+属性:
+public $layout="//layouts/名称";
+$this->pageTitle="标题";//控制器的方法中调用
+$this->id
+$this->action->id
+
+M:CActiveForm
+1\models/Xxx.php
+2\类名和类文件名同名
+3\继承CActiveRecord
+4\public static function model($className=__CLASS__){
+	return parent::model($className);
+}
+
+实例化对象
+$xxx=new Xxx();
+$xxx=Xxx::model();
+查询
+$xxx->count($condition,$params=array())
+$xxx->find($condition,$params=array());
+$xxx->findByPk($id);
+$xxx->findAll($condition,$params=array());
+
+CDbCriteria
+$criteria->condition="";
+$criteria->params=array();
+$criteria->join="";
+$criteria->alias="";
+$criteria->select="";
+$criteria->group="";
+$criteria->having="";
+$criteria->order="";
+$criteria->limit="";
+添加
+$xxx=new Xxx();
+$xxx->字段名=值;
+$xxx->save()// getPrimaryKey()
+修改:操作谁,找到谁
+$xxx=Xxx::model();
+$xxx=$xxx->find();
+$xxx->字段名=值;
+$xxx->save()
+删除
+$xxx=new Xxx();
+$xxx=Xxx::model();
+$xxx=$xxx->find();
+$xxx->delete();
+
+表单生成:CActiveForm
+$form=$this->beginWidget('CActiveForm',array(
+	'action'=>,
+	'method'=>,
+	'id'=>,
+	'htmlOptions'=>array(
+		'enctype'=>'',
+		'name'=>'',
+		'onsubmit'=>''
+	)
+));
+$form对象的方法:
+$form->textField($xxx,'字段',array())
+$form->passwordField($xxx,'字段',array())
+$form->hiddenField($xxx,'字段',array())
+$form->textArea($xxx,'字段',array())
+$form->fileField($xxx,'字段',array())
+$form->dropDownList($xxx,'字段',array,array())
+$form->radioButtonList($xxx,'字段',array,array())
+$form->checkBoxList($xxx,'字段',array,array())
+
+
+$form->error($xxx,'字段')
+
+
+
+
+$this->endWidget();
+
+自动验证
+function rules(){
+	return array(
+		array('字段','验证规则','message'=>"",'allowEmpty'=>true,.....),
+	);
+}
+验证规则:
+required
+unique
+match  'pattern'=>"正则"
+in 'range'=>array()
+length 'max'=>,'min'=>,'tooLong'=>,'tooShort'=>
+numberical 'integerOnly'=>true,'max'=>,'min'=>,'tooBig'=>,'tooSmall'=>
+compare 'compareAttribute'=>''
+captcha 
+
+自动完成
+在数据模型类中:
+function beforeSave(){
+	.....
+	return true;
+}
+
+网站优化的手段:
+缓存
+静态化
+
+索引:
+作用:提高网站数据查询的速度.
+把值一样数据,放在一起存放.所引表
+怎么提高的?
+对查询的结果进行,同质化.
+优点:
+提高查询的速度.
+缺点:
+存储空间大了.
+update  delete insert
+
+索引由查询决定.
+
+开启mysql的慢查询日志?
+show processList;
+
+创建索引:
+
+普通索引
+create index 索引名  on 表名(字段列表)
+
+唯一索引
+create unique index 索引名  on 表名(字段列表)
+
+主键索引:主键默认带索引.
+
+全文索引:中文不支持
+
+删除索引:
+drop index 索引名称 on 表名;	
+例子:
+为card创建唯一索引.
+create unique index i_card on student(card);
+select * from student where card='451442634122880';
+为年龄age创建普通索引.
+create index i_age on student(age);
+
+set profiling=1
+show profiles;
+
+分析查询语句性能的语句:
+explain 查询语句;
+explain select * from student where card='451442634122880';
+结论:查询语句中where子句中出现的字段要使用索引.
+分析:
+1\查询55班,男生有多少人?
+select count(*) as num from student where classid=55 and sex=1;
+结论:查询语句中where子句中出现的字段要使用索引,如果多条件and查询,使用联合索引.
+create index i_classid_sex on student(classid,sex);
+
+2\查询55班,男女保密各有多少人.
+explain select count(*) as num from student where classid=55 group by sex;
+
+Using temporary 临时表
+Using filesort 表外排序
+出现这两个需要优化
+
+结果:
+如果where子句,group子句同时出现,我们要为where group 子句中的字段创建联合索引.
+
+3\查询55班男生中年龄最小的,找10人.
+explain select * from student force index(i_classid_age) where classid=55 and sex=1 order by age asc limit 10;
+
+create index i_classid_sex_age on student(classid,age);
+
+4\表的外键必须有索引.
+
+表的拆分
+表的字段太多(纵向拆分)
+活跃字段一个表,惰性字段一个表.
+create table user(
+	id
+	username
+	password
+	nick
+	age
+	sex
+	viewnum
+	blognum
+	reviewnum
+	logintime
+	loginip
+	......
+)
+
+记录太多(横向拆分)
+原则:看查询语句,根据谁查询,就根据谁拆分.
+
+用户表(50万)
+	userid username password nick
+	5      wanglaoshi   123   老王
+日志表blog 10万*365*3=亿
+	bid title contents addtime userid
+
+bid
+	1-100万  blog_1
+	100-200  blog_2
+	200-300
+	300-400
+	......
+
+	select * from blog_1 where userid=5 union
+	select * from blog_2 where userid=5 union
+	select * from blog_3 where userid=5 union
+	......
+根据userid拆分:
+	userid%20=值-----------user_值-----blog_值
+	1----------------user_1-----blog_1
+	20---------------user_20-----blog_20
+	99---------------user_19-----blog_19
+日志表:
+	userid%20=值-----------user_值-----blog_值
+	5          5           user_5------blog_5
+
+	select * from blog_5 where where userid = 5
+	
+hash表:
+mysql根据某个字段的hash值,进行取余运算,根据余数,决定数据存放在哪个表中.
+create table 表名(
+	id
+	title
+	type
+)partition by hash(字段) partitions 5;
+
+文章表,根据id分区存储,分3个.
+create table newsn(
+	id int key auto_increment,
+	title char(50),
+	type int
+)partition by hash(id) partitions 3;
+
+create table newsw(
+	id int auto_increment,
+	title char(50),
+	type int,
+	primary key (id,type)
+)partition by hash(type) partitions 3;
+
+视图:一个虚拟的表.它是由一个sql语句的结果集产生.
+create view 视图名称 as select 语句;
+例子:
+学生表和班级表联合查询生成一个视图.
+create view view_student as select s.*,c.name as cname from student s join class c on s.classid=c.id; 
+
+好处:
+简化查询
+性能高
+对数据起到保护作用.
+
+create view view_news as select n.*,t.tname as tname from news n join ntype t on n.type=t.id;
+
+
+
+
+存储过程 sql编程
+实现mysql复杂操作时,使用存储过程.
+create table blog(
+	id int key auto_increment,
+	title char(100),
+	userid int
+)//
+insert into blog(title,userid) value('t1',1)//
+insert into blog(title,userid) value('t2',2)//
+insert into blog(title,userid) value('t3',3)//
+insert into blog(title,userid) value('t1',4)//
+insert into blog(title,userid) value('t2',5)//
+insert into blog(title,userid) value('t3',6)//
+insert into blog(title,userid) value('t1',7)//
+insert into blog(title,userid) value('t2',7)//
+insert into blog(title,userid) value('t3',7)//
+
+create table blog0(
+	id int,
+	title char(100),
+	userid int
+)//
+create table blog1(
+	id int,
+	title char(100),
+	userid int
+)//
+create table blog2(
+	id int,
+	title char(100),
+	userid int
+)//
+create procedure testn()
+begin
+	declare s int;
+	declare varid int;
+	declare vartitle char(100);
+	declare varuserid int;
+	set s=1;
+	select id,title,userid into varid,vartitle,varuserid from blog limit s,1;
+end//
+改变sql语句结束符号:
+delimiter //
+创建存储过程:
+create procedure 过程名称(in|out|inout参数1,参数2,....)
+begin
+	变量声明
+	赋值
+	运算
+	流程控制器语句
+end
+
+存储过程调用:
+call 过程名称()//
+
+过程体外声明变量
+set @变量名称=值;
+
+
+
+参数:字段怎么声明,参数就怎么写.
+1\输出123;  select 123;
+create procedure test1()
+begin
+	select 123 as num;
+end
+2\给过程输入一个值,在过程体中输出.
+create procedure test2(in num int)
+begin
+	select num;
+end
+3\给过程输入一个值,把这个值加1,带出来.
+create procedure test3(in num int,out num1 int)
+begin
+	set num1=num+1;
+end//
+
+create procedure test5(inout num int)
+begin
+	set num=num+1;
+end//
+
+变量声明
+declare 变量名称 类型(长度) default 默认值;
+例子:有一个存储过程,实现两个固定数相加.
+create procedure test6()
+begin
+	declare num1 int default 5;
+	declare num2 int default 100;
+	select 'kan';
+	select num1+num2;
+end//
+
+create procedure test7()
+begin
+	declare num1 int;
+	declare num2 int;
+	set num1=5;
+	set num2=100;
+	select num1+num2;
+end//
+
+赋值
+set 变量名=值;
+运算
++ - * / %  concat()
+> < = 
+! and or
+例子:
+有一个过程,实现把两个输入值拼接,输出?
+create procedure test8(in str1 varchar(10),in str2 varchar(10))
+begin
+	select concat(str1,'|',str2);
+end// 
+
+流程控制器语句
+条件语句
+if 条件 then
+语句;
+end if;
+
+if 条件 then
+语句;
+else
+语句;
+end if;
+
+if 条件 then
+语句;
+elseif 条件2 then
+语句;
+elseif 条件2 then
+语句;
+else
+语句;
+end if;
+例子:判断一个人是,未成年,成年.
+create procedure test9(in age int)
+begin
+	if age>18 then
+		select '成年';
+	else
+		select '小屁孩';
+	end if;
+end
+循环语句
+while 循环条件 do
+	过程体;
+	变换步长;
+end while;
+例子:输出1到10之间的偶数;
+create procedure test10()
+begin
+	declare i tinyint(1) default 1;
+	while i<10 do
+		if i%2=0 then
+			select i;
+		end if;
+		set i=i+1;
+	end while;
+end//
+
+例子:实现表数据的拆分.
+根据userid的值%3=值----->分表
+create procedure toBlog()
+begin
+	-- 依次从表blog读取记录,得到userid判断,写分表
+	declare num int; -- blog表总记录数据
+	declare varid int;
+	declare vartitle char(100);
+	declare varuserid int;
+	declare i int default 0;
+	select count(*) into num from blog;
+	while i<num do
+		-- 查询
+		select id,title,userid into varid,vartitle,varuserid from blog order by id asc limit i,1;
+		-- 判断userid
+		if varuserid%3 = 0 then
+			insert into blog0(id,title,userid) value(varid,vartitle,varuserid);
+		elseif varuserid%3 = 1 then
+			insert into blog1(id,title,userid) value(varid,vartitle,varuserid);
+		elseif varuserid%3 =2 then
+			insert into blog2(id,title,userid) value(varid,vartitle,varuserid);
+		end if;
+		set i=i+1;
+	end while;
+	select 'ok';
+end//
+
+row_count() 结果集中记录条数
+last_insert_id() insert语句产生的主键id
+
+
+触发器: insert  update  delete 
+在一个表中发生insert update delete时,自动会执行一些代码.
+
+作用:同步数据
+
+create trigger 名 before|after 事件 on 表名  for each row
+begin
+	语句;
+	-- new old
+end//
+
+例子:
+create table zong(
+	id int,
+	title varchar(100),
+	type tinyint(1)
+);
+文章表有insert发生同时往zong中写.
+create trigger insert_news after insert on news for each row
+begin
+	insert into zong(id,title,type) value(new.id,new.title,1);
+end//
+
+insert into news(title,contents,path,image,addtime,type)
+value('chufa','kankan','','',1234567890,5)//
+
+文章表有update发生同时往zong中同步.
+create trigger update_news after update on news for each row
+begin
+	update zong set title=new.title where id=old.id and type=1;
+end//
+
+文章表有delete发生同时往zong中同步.
+create trigger delete_news after delete on news for each row
+begin
+	delete from zong where id=old.id and type=1;
+end//
+
+
+ 
+用户管理
+创建
+create user 用户名@localhost identified by '密码'
+例子:创建一个用户xiaozhang
+
+删除用户
+drop user 用户名@localhost
+修改密码
+set password=password('新密码')
+
+权限管理
+分配
+grant 权限 on 对象 to 用户名@localhost;
+权限:
+	insert
+	delete
+	update
+	select
+	create
+	drop
+	alter
+	grant
+	revoke
+	show
+	
+	all
+对象:
+	数据库.表名
+	*.*
+	库名.*
+	
+回收
+	revoke 权限 on 对象 from 用户@localhost
+
+数据库的备份与恢复
+备份
+mysqldump -u用户名 -p密码 数据库名称>文件路径/xxx.sql
+恢复:sql语句
+use 库名;
+source D:/1705.sql;
