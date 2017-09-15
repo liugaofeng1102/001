@@ -1,0 +1,247 @@
+1、场景：物理机-》window操作系统+虚拟化软件+ Linux操作系统（镜像文件iso）
+1、双系统=windows+Linux
+2、iso+MacOS操作系统-》ios开发
+
+1.	理解文件系统(目录/文件功能)
+1.1	文件系统的根目录(***)  /
+1.2	/bin(***): binary存储二进制可执行文件(文件内容代码)
+1.3	/etc(***): (and so on等等): 存储软件的配置文件(例如: httpd.conf)
+1.4	/lib(***): library存储程序执行所需的库文件
+1.5	/home(***): 家目录/普通用户的根目录; 
+a.	登录用户名php01
+b.	用户php01的根目录:  /home/php01/
+1.6	/root: 超级用户的根目录
+
+
+clear
+cd /
+ls 显示目录下文件
+pwd 显示路径
+cd /. 文件系统的根目录
+cd ..  上级目录
+
+cd ~  当前用户的根目录
+
+mkdir 目录名       创建目录
+rmdir 空的目录名   删除空的目录
+
+mk 双击tab          
+man mkdir          查手册
+q 回来
+
+touch 文件名1 文件名2 创建文件
+rm 文件名 删除文件
+rm -ir 文件夹名 删除非空的目录
+ctrl + c 不删除
+
+
+查看文件的内容
+cat 一次性的读取文件所有内容
+more
+空格 （space） 下一页
+b              上一页
+
+less
+pageup
+pagedown
+
+
+查看前几行
+head -n
+
+查看后几行
+tail -n
+
+文件内容编辑
+vi命令
+vim命令（vi升级版本）
+nano命令
+vi编辑器术语
+两种模式
+输入模式
+指令模式
+$vi i(a)
+ESC
+保存/不保存
+:wq
+不保存：q
+file:///home/php01/viDir/testvi.html
+
+$ cp -r  源目录名  目标目录名
+$ cp  -r  userInfoDir/  stuInfoDir/newUserInfoDir
+
+
+su切换用户
+reboot 重启系统
+
+
+查看文件和目录属性
+ll
+
+chmod 644 文件名
+U 用户 g 群组 o 其他人 a 所有人
++-=添加删除设置
+775 664
+777 可以创建
+
+文件目录的扩展
+window 系统文件的扩展名 exe，txt，bat，dll
+1 Linux系统文件的扩展名
+.conf 配置文件
+.d    某个目录
+.sh .py 脚本语言扩展名
+
+file 查看当前文件类型 ASCII text
+查看命令文件所在目录 httpd -v可执行文件
+1  which 可执行文件文件名       只从/bin /sbin下找
+包含库文件所在目录以及手册所在目录
+2  whereis 可执行文件文件名 命令 本地数据库文件中查找
+3  locate 可执行文件文件名
+find查找一般文件 find 目录的名字
+find /home -name"*hello"
+
+用户管理
+1场景：如何开发环境的用户和密码？从超级用户root老大充当角色，root创建/删除用户和密码
+创建用户的步骤
+切换到root用户 $su
+创建/添加用户
+adduser用户名
+passwd 用户名
+删除用户
+切换到root
+su
+删除 userdel 用户名 回车
+-r 同时删除用户的根目录
+
+如何让普通用户具有超级用户的权限
+1 切换到root目录
+2 执行visdo命令
+3 添加内容
+4 保存并退出
+
+ctrl+Shift+T 加一个终端窗口
+
+之后任何命令返回没有权限、permission deny，在之前的命令最前面加sudo
+
+打包/解包
+压缩/解压缩 gzip bzip2 xz（新）
+
+打包 tar -cvf aaa.tar 目录名
+
+压缩  gzip -v test.html
+      bzip2 -v aaa.bz2
+       xz  -v aaa.xz
+
+解压缩 gzip -d test.gz
+       bzip2 -d aaa.bz2
+       xz  -d aaa.xz
+
+解包 tar -xvf aaa.tar
+
+
+1场景Apache为例子
+Apache官网 http:httpd.apache.org
+
+
+
+系统中安装和卸载软件
+1源代码安装
+源代码：给程序员看，包含源代码（）编译型语言代码）编译成机器字节码，安装，启动软件
+解释型语言：javascrip,PHP
+代码-解释器-直接执行
+编译型语言：c/c++
+代码-编译器-可执行包-直接运行执行包
+
+样列：apache安装步骤
+安装编译器gcc   下载apache指定的版本  解压缩并解包-目录
+（源代码+文档+readme）
+检查当前的系统是否可以安装  源代码编译 安装 启动软件
+每一步都必须成功才可以执行下一步
+
+rpm安装包
+rpm命令直接安装
+
+https://dev.mysql.com/
+
+
+原生yum源安装
+系统的发行商提供了很多软件包的源URL
+优点：步骤特别简单，不需要指定URL
+一般步骤：$sudo yum install 包名(如：httpd)
+
+remove httpd 卸载
+
+查看那个进程占用80端口 sudo lsof -P | grep LISTEN
+假设Ngnix进程占用，停止Ngnix服务或者kill进程
+kill -9 id号
+killall nginx/httpd
+
+
+下载并安装PHP
+有必要的卸载
+       sudo yum list installed| grep php
+   86  sudo yum remove php*
+   87  whereis httpd
+       sudo yum install php php-mysql
+       sudo vi /var/www/html/test.php
+
+
+mysql卸载与安装
+       sudo yum list installed| grep mysql
+卸载所有的mysql的包，除了php-mysql包
+       sudo yum remove mysql-libs
+       sudo yum remove compat-mysql51.i686
+
+安装  sudo yum install mysql mysql-sever mysql-libs
+
+
+
+
+
+./configure
+
+sudo service mysqld start
+
+testsql.php
+<?php
+$connection=mysqli_connect("127.0.0.1","root","","test");
+if(!$connection){
+  echo "Error: cannot connect test database";
+exit;
+}
+echo "Success:can connect test database";
+mysqli_close($connection);
+?>
+
+
+自定义yum源安装
+2.1	创建yum源文件
+$ sudo  vi  /etc/yum.repos.d/mysql-community.repo
+2.2	在文件内容添加内容(前五行): 指定源URL
+?	[设置源名字]
+?	baseurl=自定义的URL
+?	enabled=1; 表示该源可用; 0表示不可用
+?	gpgcheck=0; 1表示验证gpg key; 0表示不验证
+?	gpgkey指定key所在的目录(如果gpgcheck=0, 此行可以省略)
+ 
+2.3	再下载安装
+$ sudo yum install mysql-community-server
+  2.4 验证
+
+
+yum install 完成下载与安装
+引言：步骤相对简单 +指定软件的版本
+样列：以mysq为例，指定安装
+需创建一个yum源文件，
+sudo /etc/yum.repos.d/xxxx.repo
+在文件内容添加内容：指定URL
+再下载安装
+
+vim-r/var/www/html/testsql.php
+
+确定是否成功启动？查看进程情况
+$ps aux | grep mysqld 
+$ps aux | grep httpd 
+
+查看无法启动 /var/log/httpd/xxx.log
+可以查看log日志文件，记录软件的启动情况+处理请求+SQL+增删改查
