@@ -1,0 +1,54 @@
+delimiter //
+
+按id拆表
+create procedure toclass()
+begin
+	-- 依次从表blog读取记录,得到userid判断,写分表
+	declare num int; -- blog表总记录数据
+	declare varid int;
+	declare varname char(100);	
+	declare i int default 0;
+	select count(*) into num from class;
+	while i<num do
+		-- 查询
+		select id,name into varid,varname from class order by id asc limit i,1;
+		-- 判断userid
+		if varid%3 = 0 then
+			insert into class01(id,name) value(varid,varname);
+		elseif varid%3 = 1 then
+			insert into class02(id,name) value(varid,varname);
+		elseif varid%3 =2 then
+			insert into class03(id,name) value(varid,varname);
+		end if;
+		set i=i+1;
+	end while;
+	select 'ok';
+end//
+
+
+例子:按userid实现表数据的拆分.
+根据userid的值%3=值----->分表
+create procedure toBlog()
+begin
+	-- 依次从表blog读取记录,得到userid判断,写分表
+	declare num int; -- blog表总记录数据
+	declare varid int;
+	declare vartitle char(100);
+	declare varuserid int;
+	declare i int default 0;
+	select count(*) into num from blog;
+	while i<num do
+		-- 查询
+		select id,title,userid into varid,vartitle,varuserid from blog order by id asc limit i,1;
+		-- 判断userid
+		if varuserid%3 = 0 then
+			insert into blog0(id,title,userid) value(varid,vartitle,varuserid);
+		elseif varuserid%3 = 1 then
+			insert into blog1(id,title,userid) value(varid,vartitle,varuserid);
+		elseif varuserid%3 =2 then
+			insert into blog2(id,title,userid) value(varid,vartitle,varuserid);
+		end if;
+		set i=i+1;
+	end while;
+	select 'ok';
+end//
