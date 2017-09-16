@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>Document</title>
+	<!--最后修改于:<!--#echo var="LAST_MODIFIED" -->-->
+</head>
+<body>
+	<!--#include file="include/header.html"-->
+	<div>
+		<p>中华人民共和国01</p>
+		<p>中华人民共和国02</p>
+		<p>中华人民共和国03</p>
+		<p>中华人民共和国04</p>
+		<p>中华人民共和国05</p>
+		<p>中华人民共和国06</p>
+		<p>中华人民共和国07</p>
+		<p>中华人民共和国08</p>
+		<p>中华人民共和国09</p>
+		<p>中华人民共和国10</p>
+		<p>中华人民共和国11</p>
+		<p>中华人民共和国12</p>
+		<p>中华人民共和国13</p>
+		<p>中华人民共和国14</p>
+		<p>中华人民共和国15</p>
+	</div>
+	<!--#include file="include/footer.html"-->
+</body>
+</html>
