@@ -1,0 +1,285 @@
+王老师
+17701268205
+
+编程思想(思想有多远,就能滚多远)
+
+想(分析):把自己当成计算机,你怎么做,计算机就怎么做.
+找到解决方案
+代码实现
+有一个字符串,请从这个字符串中找出某字符出现的次数?
+封装成一个函数
+
+分析:(想)
+$str="fdsafdsafjsal";
+
+smarty
+mvc  ***
+thinkphp
+yii
+*ci
+*laravel
+
+mysql高级
+	索引
+	触发器
+	存储过程
+	表的拆分,hash表
+页面静态化  detail.php?id=5----->news/5.html
+Smarty模板引擎:
+detail.php?id=5
+	|
+--------------------------
+detail.html(模板)      detail.php(主程序)
+显示+数据<------smarty-----数据
+作用:
+smarty能够把html和php分离,通过smarty把数据传给html(模板)
+并显示模板.
+如何使用:
+
+smarty---别人写好程序  *** Smarty.class.php入口类
+template_c---模板编译文件 php+html
+template---模板文件夹
+	news
+		detail.html 模板 html文件
+	product
+	message
+	comment
+news
+	detail.php
+index.php
+
+例子:实现文章详细页使用(smarty)
+1\新建文件夹及文件
+smarty
+	类
+template
+	news
+		detail.html
+template_c
+news
+	detail.php
+2\在detail.php中使用smarty
+声明一个常量ROOT,放项目的跟路径
+引入smarty
+实例化smarty
+告诉smarty模板的家目录
+setTemplateDir()
+告诉smarty模板编译文件的家目录
+setCompileDir()
+给模板传值
+assign(到模板上叫什么,被传递的值);
+
+
+
+显示模板
+display()
+
+模板标签:用来在模板上接收数据.
+在smarty中指定模板标签的定界符:
+<{}>
+$smarty->left_delimiter="<{";
+$smarty->right_delimiter="}>";
+变量标签:
+<{$名}> 变量标签
+<{$名.下标 | [下标]}>数组变量标签
+数组遍历标签:
+<{foreach $名 as $k=>$v}>
+<{$v.下标}>
+<{/foreach}>
+
+循环标签的属性
+$v@index --- 获取循环的下标
+$v@iteration --- 第几次循环
+$v@total --- 循环的总次数
+$v@first --- 第一个循环
+$v@last --- 最后一次循环
+
+条件标签
+<{if 条件}>
+<{/if}>
+
+<{if 条件}>
+<{else}>
+<{/if}>
+
+<{if 条件}>
+<{elseif 条件}>
+.....
+<{else}>
+
+<{/if}>
+
+变量调节器:在模板上对变量使用函数,函数可以是系统函数
+<{第一个参数|函数名称:第二个参数:第三个参数:...}>
+substr($str,0,3)
+mb_substr()
+//根据函数的作用,分析参数
+//把某个时间戳转化成一个时间日期格式字符串
+date('格式'[,时间戳])
+
+
+例子2:使用smarty实现文章列表页
+lister.php + lister.html
+
+例子3:优化上面两个例子的代码
+1\在项目目录下加一个配置文件
+2\在配置文件中写smarty设置
+
+
+
+
+
+
+
+作业:
+实现文章的前台页面
+
+php文件加载的绝对路径:从盘符
+/
+http://localhost/
+
+模板上直接使用php的常量:
+$smarty.const.名称
+模板上直接访问预定义变量:
+$smarty.get.名称
+$smarty.post.名称
+$smarty.cookies.名称
+$smarty.session.名称
+$smarty.server.名称
+展示国内的前5条数据:
+1\在主程序中把数据获取到,传给模板
+2\模板上遍历显示
+
+封装一个字符串截取的函数:
+common/function.php
+
+展示国际的前5条数据:
+1\在主程序中把数据获取到,传给模板
+2\模板上遍历显示
+注册函数 ***
+在主程序中封装php函数,把php函数注册模板,模板上调用并显示数据
+1\如何注册
+$smarty->registerPlugin('function',"到模板上函数叫什么","被注册的函数的名称");2\在模板上如何调用
+2\调用
+{函数名 参数1=值 参数2=值 参数3=值 ......}
+特点:
+主函数至多两个参数,第一个参数接收了所有的参数值
+第二个参数,默认是smarty对象.
+
+
+
+缓存
+静态化
+
+
+
+
+常量在模板上的使用
+$smarty.const.名称
+预定义变量在模板的使用
+$smarty.get.名称
+$smarty.cookies.名称
+$smarty.session.名称
+
+注册函数(三步走)
+1\声明主函数
+2\注册到模板
+3\模板上调用,显示数据
+
+缓存:把数据库中的数据,临时存放在文件中.
+开启缓存
+生命周期
+文件保存的目录
+例子:使用注册函数,显示所有分类的获取
+1\封装一个主函数
+获取所有的分类
+function getType($params,$s){
+	global $pdo;
+	$var=$params['var'];
+	$sql="select * from ntype";
+	$pdoS=$pdo->query($sql);
+	$arr=$pdoS->fetchAll(PDO::FETCH_ASSOC);
+	$s->assign($var,$arr);
+}
+2\把主函数注册给模板
+$smarty->registerPlugin('function','getType','getType');
+3\在模板上调用
+{getType var='typeArr'}
+{foreach $typeArr as $v}
+	<li>{$v.tname}</li>
+{/foreach}
+
+获取当前文章的上一篇,下一篇:
+
+上一篇-----小于当前id,最大的那个
+$sql="select * from news where id<$id order by id desc limit 1";
+下一篇-----大于当前id,最小的那个
+
+为什么要生成缓存?
+为了减轻数据库的压力.
+我们现在程序detail.php有没有减轻数据库的压力?
+$smarty->isCached("path",cache_id);
+
+1-----------------1^lfdksjafdldetail.html.php
+2-----------------2^lfdksjafdldetail.html.php
+3-----------------3^lfdksjafdldetail.html.php
+4-----------------4^lfdksjafdldetail.html.php
+5-----------------5^lfdksjafdldetail.html.php
+
+
+静态化:把php程序的运行结果获取到,写到一个html文件中去.
+生成一个html文件.
+0\什么样的数据适合做静态化?
+不变,几乎不变,偶尔会变.
+1\什么时候生成这个静态页面?
+后台添加,写入数据库表成功,就生成静态页面.
+a\php程序能够获取文章详细页的运行结果
+b\生成一个html文件,文件名称(id.html),保存的目录 html
+起名:
+1-----------------1.html
+2-----------------2.html
+3-----------------3.html
+4-----------------4.html
+5-----------------5.html
+
+
+文章修改成功后,立刻生成静态页面.
+
+页面布局或效果发生改变,一次性静态化所有.(写在后台)
+不能把所有的文章读取,逐条静态化.-----一条一条的静态化
+
+alltohtml.php?start=0//处理一条
+select * from news id>$start order by id asc limit 1
+alltohtml.php?start=3//处理第二条
+select * from news id>$start order by id asc limit 1
+alltohtml.php?start=5//6
+alltohtml.php?start=6//7
+alltohtml.php?start=7//8
+alltohtml.php?start=8//100
+alltohtml.php?start=100//101
+alltohtml.php?start=101//结束请求
+
+curl()函数库
+file_get_contents("url")
+
+js:
+location.href="url";
+
+38,静态化成功<script type='text/javascript'>
+	setTimeout(function(){
+		location.href='allToHtml.php?start=38';
+	},500)
+</script>
+3
+5
+6
+7
+8
+100
+101
+
+
+<script type="text/javascript" src="click.php?id=15"></script>
+
+<img src="verify.php"/>
+<link />
