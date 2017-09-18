@@ -1,0 +1,230 @@
+MVC:软件设计模式
+
+规定了整个软件怎么编写.
+规定目录结构:
+13_MVC
+	Controller
+	Model
+	View
+	Cache
+		Template_c
+	Vendor
+	Core
+		Page.class.php
+		......
+规定文件的命名(数据模型类,控制器类,模板):
+	数据模型类
+	放在Model/XxxModel.class.php 类名和类文件名同名
+	控制器类
+	放在Controller/XxxController.class.php 类名和类文件名同名
+	模板
+	放在View/控制器/模板.html
+
+第三方文件
+
+优点:
+	项目便于维护.
+	实现了软件低耦合性.
+	代码规范
+缺点:
+	理解困难
+	性能下降
+	C层的工作过于繁重
+	
+
+
+
+
+
+web项目:
+静态资源 图片 js css
+类
+页面程序
+模板
+
+工作原理:
+url地址  ***/index.php?c=控制器名&a=方法名
+M层:数据库操作类,数据处理类
+NewsModel.class.php
+	function getNewsById($id){
+
+	}
+V层:模板和静态资源
+C层:控制器类
+NewsController.class.php
+	function detail(){
+		//要文章数据
+		//调用模板
+	}
+呈现文章详细页
+http://localhost/psd1705/13_MVC/index.php?c=news&a=detail
+	|      |
+	index.php
+	实例化控制器,调用了控制器方法
+	|      |
+	C      |
+	|NewsController/detail()
+---------------|
+||            ||
+M             V
+
+文章列表页:
+http://localhost/psd1705/13_MVC/index.php?c=news&a=lister
+index.php中加载NewsController.class.php/lister
+1\在控制器NewsController加一个方法
+2\在lister中调用数据模型类NewsModel获取文章数据
+3\文章数据传给模板,显示模板
+4\在v层有一个模板文件News/lister.html
+
+问题:
+smarty的实例化设置写在一个父类的构造方法中
+数据模型类的自动加载
+function __autoload($className){//NewsModel
+if(preg_match("/Model$/",$className)){
+   require ROOT."Model/".$className.".class.php";
+}else if(preg_match("/^Smarty/",$className)){
+   require ROOT.'Vendor/smarty/sysplugins/'.strtolower($className).".php";
+}
+}
+smarty_cacheresource_custom.php 类文件名
+Smarty_CacheResource_Custom 类型
+类设计模式:
+模式---规定,要求
+设计模式:按着要求规定来做事情.
+单例:
+要求规定
+1\在类的外部不能使用new实例化对象
+2\对象不能被克隆
+3\有一个静态方法能实例化自己,且只能产生一个.
+class a{
+	private static $ob="";
+	private function __construct(){
+
+	}
+	private function __clone(){
+
+	}
+	static function getInstance(){
+		if(self::$ob==''){
+			return new self();
+		}else{
+			return self::$ob;
+		}
+		
+	}
+
+}
+//类自动加载函数
+//如何实现:
+当程序中去实例化一个未加载的类时,
+extends一个未加载的类时,
+implements 一个接口时
+静态类的静态属性或方法时
+
+autoload自动执行
+function __autoload(){
+
+}
+
+作业:在我们程序的基础上,实现文章的添加.
+1\呈现添加文章的表单页面
+NewsController
+	function add(){
+		//获取分类M---->NtypeModel.class.php
+		//操作模板V---->News/add.html
+	}
+2\提交表单,有一个程序来处理表单数据
+NewsContrller
+	function save(){
+		//保存文章
+	}
+
+MVC工作原理:
+url地址指定控制器和方法发送请求
+	|
+	index.php
+	|加载控制器 实例化 调用方法
+	控制器
+	|
+----------------
+M              V
+
+
+作业:在我们程序的基础上,实现文章的添加.
+1\呈现添加文章的表单页面
+NewsController
+	function add(){
+		//获取分类M---->NtypeModel.class.php
+		//操作模板V---->News/add.html
+	}
+2\提交表单,有一个程序来处理表单数据
+NewsContrller
+	function save(){
+		//保存文章
+	}
+
+封装一个数据模型类的父类:
+
+前后台分离,控制器和模板的分离,控制器模板的分组:
+呈现文章详细页
+http://localhost/psd1705/13_MVC/index.php?g=home&c=news&a=detail
+
+index.php中 找前台控制器,还是后台控制器
+
+Controller
+	Home
+		NewsController.class.php
+	Admin
+		NewsController.class.php
+View
+	Home
+		News
+			detail.html
+			lister.html
+	Admin
+		News
+			add.html
+			oper.html
+
+例子:实现文章的添加
+url变了
+index.php控制加载变了
+显示模板时,模板的路径变了
+
+例子:文章前台页面
+url变了
+index.php控制加载变了
+显示模板时,模板的路径变了
+
+url没有传参数,给默认值
+后台分类的添加
+1\控制器
+NtypeController.class.php
+	function add(){
+		//分类添加的表单页面 V
+		
+	}
+	function save(){
+		//使用M
+	}
+
+后台访问控制
+	没有登录不能访问
+	NtypeController
+	NewsController
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
