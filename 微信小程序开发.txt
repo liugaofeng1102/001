@@ -1,0 +1,108 @@
+小程序基础
+小程序是一个不需要下载就可以使用的程序，用户扫一扫或者搜一搜就可以使用的程序
+
+简单描述：借助于微信的应用，无需下载安装
+定位：小程序要最短服务路径
+
+背景：提案：2016年1月9日
+内侧：2016年9月21日
+上线：2017年1月9日
+
+小程序目前状况 JavaScript+XML+JSON+CSS
+和预期有一些差别
+ios/Android 平台开发移动应用代价：架构+语言+控件+网络+优化
+市场：初创公司+中小公司
+
+搭建开发环境
+官方网站： 百度-微信小程序
+
+app.json
+{
+  "pages": [
+    "pages/index/index",
+    "pages/logs/logs"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "green",
+    "navigationBarTitleText": "微信小程序",
+    "navigationBarTextStyle": "white"
+  }
+}
+
+app.js
+App({
+  // 属性名: 属性值(JS的类型)
+  onLaunch: function () {
+    console.log('onLaunch is called......')
+  },
+  onShow: function () {
+    console.log('onShow is called......')
+  },
+  onHide: function () {
+    console.log('onHide is called......')
+  },
+  onError: function () {
+    console.log('onError is called......')
+  }
+})
+
+index.js
+Page({
+  data:{
+    detail:{
+      imageSrc:"../resources/001.jpg",
+      nickname:"Steven Jobs",
+      motto:"normal celestial movement"
+    }
+  },
+  onLoad: function () {
+    console.log('****onLoad is called')
+  },
+  onReady: function () {
+    console.log('****onReady is called')
+  },
+  onShow: function () {
+    console.log('*****onShow is called')
+  },
+  onHide: function () {
+    console.log('*****onHide is called')
+  },
+  onUnload: function () {
+    console.log('****onUnload is called')
+  }
+})
+
+index.wxml
+<view>
+  <!--显示头像和昵称  -->
+  <view>
+  <image src="{{detail.imageSrc}}"></image>
+  <text>{{detail.nickname}}</text>
+
+  </view>
+<!--显示个人签名  -->
+  <view>
+  <text>{{detail.motto}}</text>
+  </view>
+</view>
+
+
+css
+Main axis 主轴
+cross axis 侧轴
+flex container 容器 比喻段落/窗口
+flex item 项 比喻文字，盒子
+
+作用在 contain上的属性
+flex-direction 主轴方向 row（默认）column reverse
+
+flex-wrap item如何换行，默认不换行  wrap wrap-reversre
+
+justify-content item在主轴的对其方式 center flex-end 两端对齐space-between   平均分布:space-around
+
+
+align-items  item在侧轴的对齐方式 
+
+align-self:auto/flex-start
+
