@@ -1,0 +1,87 @@
+﻿redis 内存缓存。
+安装：
+www.redis.io
+1、把安装文件复制到D:/redis/
+2、打开cmd窗口
+3、新建配置文件
+4、运行命令
+redis-server.exe redis.conf
+
+通过客户端测试：
+redis-cli.exe
+2、打开cmd窗口
+3、运行命令
+redis-cli.exe -h 127.0.0.1 -p 6379
+
+如果通过php操作redis
+通过php的dll文件，实现对redis操作。
+1、把dll文件放在php安装目录下ext
+2、修改php的配置文件php.ini 加载dll
+extension=php_igbinary.dll
+extension=php_redis.dll
+3、重启Apache
+4、确认dll文件是否加载并运行成功。
+phpinfo();
+
+存字符串，数组，把数组序列化。serialize() 
+$ob=new Redis();
+//连接redis
+$ob->connect("127.0.0.1",6379);
+get(key)
+set(key,value)
+setnx(key,value)  not exist
+del(key)
+incr(key)//某个下标对应的值自增
+incrby(key,number)//某个下标对应的值增加多少
+
+mset(array('key0'=>value,'key1'=>value,.....))
+msetnx(array('key0'=>value,'key1'=>value,.....))
+存hash表
+hset("表名",'名',值)
+hget("表名",'名')
+hlen("表名")
+hgetall("表名")
+hkeys("表名")
+hvals("表名")
+
+hincr("表名",'名')
+hincrby("表名",'名',number)
+
+聊天室：
+	from  to  content  pubtime
+	1      2  你好     123456
+	2      1  你好     123457
+	1      2  你那里有宝马配件吗   123458
+	2      1  滚，不卖
+
+	memcached
+	$mc->add('token_12',array(
+		array(),
+	))
+	redis
+	$redis->hset('totken_12','k_1',serialize(array()))
+
+1、Redis不仅仅支持简单的k/v类型的数据，
+同时还提供list，set，zset，hash表等数据结构的存储。
+
+2、redis中不能存放数组。 
+
+3、Redis支持数据的备份。主-从模式
+
+4、Redis支持数据的持久化，可以将内存中的数据保持在磁盘中，重启的时候可以再次加载进行使用。
+
+5、Redis当内存空间不够，可以把值放到磁盘，key放在内存。
+
+6、memcached性能高于redis。
+
+
+
+
+
+
+
+
+
+
+
+
